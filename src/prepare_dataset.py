@@ -3,7 +3,7 @@ import shutil
 
 print("Preparing dataset...")
 
-source_dir = "data/facial_emotion_recognition/images"
+source_dir = "data/facial_emotion_recognition/images/images"
 target_dir = "data/facial_emotion_recognition/train"
 
 emotion_map = {
