@@ -1,45 +1,40 @@
 import os
 import shutil
 
-print("Preparing dataset...")
-
-source_dir = "data/facial_emotion_recognition/images/images"
-target_dir = "data/facial_emotion_recognition/train"
-
-emotion_map = {
-    "Anger": "anger",
-    "Contempt": "contempt",
-    "Disgust": "disgust",
-    "Fear": "fear",
+print("starting dataset")
+raw_images_folder= "data/facial_emotion_recognition/images/images"
+train_output_folder ="data/facial_emotion_recognition/train"
+emotion_lookup = {
+    "Anger":"anger",
+    "Contempt":"contempt",
+    "Disgust":  "disgust" ,
+    "Fear":"fear",
     "Happy": "happy",
-    "Neutral": "neutral",
-    "Sad": "sad",
-    "Surprised": "surprised"
-}
+    "Neutral": "neutral" ,
+    "Sad":"sad",
+    "Surprised": "surprised"}
+for emotion_name in emotion_lookup.values( ):
+    folder_path= os.path.join(train_output_folder , emotion_name)
+    os.makedirs( folder_path ,exist_ok=True )
 
-# Make sure train emotion folders exist
-for emotion_folder in emotion_map.values():
-    os.makedirs(os.path.join(target_dir, emotion_folder), exist_ok=True)
 
-# Loop through each numbered person folder
-for person_folder in os.listdir(source_dir):
-    person_path = os.path.join(source_dir, person_folder)
 
-    if not os.path.isdir(person_path):
+for person_id in  os.listdir( raw_images_folder ):
+    person_directory= os.path.join(raw_images_folder, person_id)
+    if not os.path.isdir(person_directory ):
         continue
-
-    for image_file in os.listdir(person_path):
-        file_name_no_ext = os.path.splitext(image_file)[0]
-
-        if file_name_no_ext not in emotion_map:
+    
+    for img_file in os.listdir(person_directory):
+        label_name =os.path.splitext( img_file )[0]
+        if label_name not in emotion_lookup:
             continue
+        emotion_category= emotion_lookup[ label_name]
+        original_file_path =os.path.join(person_directory , img_file )
+        new_file_name= person_id  + "_" + img_file
 
-        emotion_folder = emotion_map[file_name_no_ext]
+        new_file_path =os.path.join( train_output_folder,
+            emotion_category,
+            new_file_name )
+        shutil.copy(original_file_path , new_file_path )
 
-        old_path = os.path.join(person_path, image_file)
-        new_name = f"{person_folder}_{image_file}"
-        new_path = os.path.join(target_dir, emotion_folder, new_name)
-
-        shutil.copy(old_path, new_path)
-
-print("Dataset reorganized successfully.")
+print("finished reorganizing dataset")
